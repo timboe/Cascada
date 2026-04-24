@@ -168,7 +168,7 @@ void FSMDisplayLevelTitle(const bool newState) {
   static uint16_t timer = 0;
   static uint16_t timeToWait = 0;
   if (newState) {
-    const uint32_t before = pd->system->getCurrentTimeMilliseconds(); 
+    const uint32_t before [[maybe_unused]] = pd->system->getCurrentTimeMilliseconds(); 
     timer = 0;
     timeToWait = IOIsCredits() ? TIME_DISPLAY_SPLASH*5 : TIME_DISPLAY_SPLASH;
     gameSetYOffset(-DEVICE_PIX_Y - TURRET_RADIUS, /*force = */true);

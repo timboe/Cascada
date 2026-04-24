@@ -120,8 +120,6 @@ void renderGameMarble(const int32_t fc, const enum FSM_t fsm) {
 
   const int32_t gutterY = IOGetCurrentHoleHeight();
   const float yOff = gameGetYOffset();
-  const float pfn = gameGetParalaxFactorNear(true);
-  const int32_t parallaxPond = pfn - gameGetParalaxFactorNearForY(true, gutterY - DEVICE_PIX_Y);
 
   if (!FSMGetBallInPlay()) {
     // render at dummy location

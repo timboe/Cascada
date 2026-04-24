@@ -769,7 +769,7 @@ void bitmapDoUpdateScoreCard(void) {
 
   pd->graphics->setDrawMode(kDrawModeFillWhite);
   uint8_t count = 0;
-  for (int i = start; i < stop; ++i) {
+  for (uint32_t i = start; i < stop; ++i) {
     const uint16_t l = i % d; 
     char text[128];
 
@@ -1093,7 +1093,6 @@ void bitmapDoPreloadI(void) {
 }
 
 void bitmapDoPreloadJ(void) {
-  char text[128];
 
   for (int s = 0; s < kNPegSpecial; ++s) {
     m_specialTextBitmap[s] = pd->graphics->newBitmap(SPECIAL_TEXT_WIDTH, TITLETEXT_HEIGHT, kColorClear);

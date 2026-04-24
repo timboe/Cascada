@@ -110,7 +110,7 @@ void IODonePreloading(void) {
 void IODoUpdatePreloading(void) {
   if (!IOGetIsPreloading()) { return; }
 
-  const uint32_t before = pd->system->getCurrentTimeMilliseconds();
+  const uint32_t before [[maybe_unused]] = pd->system->getCurrentTimeMilliseconds();
   switch (m_preloading) {
     case 0: IODoScanLevels(); break;
     case 1: bitmapDoPreloadA(); break;
@@ -145,8 +145,8 @@ void IODoUpdatePreloading(void) {
     case 30: bitmapDoPreloadM(3); break; // POND_WATER_SIZE
     case 31: IOReadVolumePreferences(); IOWriteCustomLevelInstructions(); break;
   }
-  const uint32_t after = pd->system->getCurrentTimeMilliseconds();
   #ifdef DEV
+  const uint32_t after = pd->system->getCurrentTimeMilliseconds();
   pd->system->logToConsole("Preload %i took %i ms", (int)m_preloading, (int)(after - before));
   #endif
   ++m_preloading;
@@ -444,7 +444,7 @@ void IODoScanLevels() {
       pd->system->logToConsole("decoding header for %s", filePath);
       #endif
       pd->json->decode(&jd, (json_reader){ .read = IODoRead, .userdata = file }, NULL);
-      int32_t status = pd->file->close(file);
+      pd->file->close(file);
       file = NULL;
     }
   }
@@ -455,7 +455,7 @@ void IODoScanLevels() {
   snprintf(filePath, 128, SAVE_FORMAT_1_NAME);
   SDFile* file = pd->file->open(filePath, kFileReadData);
   if (file) { // Load save data
-    int result = pd->file->read(file, m_persistent_data, SAVE_SIZE_V1);
+    int result [[maybe_unused]] = pd->file->read(file, m_persistent_data, SAVE_SIZE_V1);
     #ifdef DEV
     pd->system->logToConsole("Reading %i bytes of save data, result %i", SAVE_SIZE_V1, result);
     #endif
@@ -757,7 +757,7 @@ void IODoLoadCurrentHole() {
   memset(&m_linear, 0, sizeof(struct LinearLoader_t));
 
   pd->json->decode(&jd, (json_reader){ .read = IODoRead, .userdata = file }, NULL);
-  int status = pd->file->close(file);
+  pd->file->close(file);
   file = NULL;
 
   // Check playable (does not apply to the credits, however)
@@ -783,7 +783,7 @@ void IOWriteCustomLevelInstructions() {
     "Each round should have sequentially numbered holes, starting from hole 1.\n"
   );
   SDFile* file = pd->file->open(CUSTOM_LEVEL_INSTRUCTIONS_NAME, kFileWrite);
-  const int32_t wrote = pd->file->write(file, fileContent, sz);
+  pd->file->write(file, fileContent, sz);
   pd->file->close(file);
   file = NULL;
 }
@@ -794,7 +794,7 @@ void IODoSave() {
   char filePath[128];
   snprintf(filePath, 128, SAVE_FORMAT_1_NAME);
   SDFile* file = pd->file->open(filePath, kFileWrite);
-  const int32_t wrote1 = pd->file->write(file, m_persistent_data, SAVE_SIZE_V1);
+  const int32_t wrote1 [[maybe_unused]] = pd->file->write(file, m_persistent_data, SAVE_SIZE_V1);
   #ifdef DEV
   pd->system->logToConsole("SAVE wrote %i bytes, expected to write %i bytes", wrote1, SAVE_SIZE_V1);
   #endif
@@ -805,7 +805,7 @@ void IODoSave() {
   snprintf(filePath, 128, SOUND_PREFERENCE_NAME);
   file = pd->file->open(filePath, kFileWrite);
   const uint8_t soundSetting = soundGetSetting();
-  const int32_t wrote2 = pd->file->write(file, &soundSetting, 1);
+  pd->file->write(file, &soundSetting, 1);
   pd->file->close(file);
   file = NULL;
 }

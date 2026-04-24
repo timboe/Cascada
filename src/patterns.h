@@ -2,7 +2,7 @@
 
 static const LCDPattern kColorChekerboard = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
-const static LCDPattern kGreyPattern = {
+static const LCDPattern kGreyPattern = {
   0,0,0,0,0,0,0,0,
   0b11001100,
   0b11001100,
@@ -13,7 +13,7 @@ const static LCDPattern kGreyPattern = {
   0b11001100,
   0b11001100};
 
-const static LCDPattern kHatchedPattern = {
+static const LCDPattern kHatchedPattern = {
   0,0,0,0,0,0,0,0,
   0b11110000,
   0b11110000,
