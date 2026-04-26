@@ -1205,7 +1205,7 @@ void bitmapDoPreloadM(const uint8_t n) {
 void bitmapDoInit_cascada(void) {
   // Load critical bitmaps
   m_fontRoobert10 = bitmapDoLoadFontAtPath("fonts/Roobert-10-Bold");
-  m_headerImage = bitmapDoLoadImageAtPath("images/splash");
+  m_headerImage = bitmapDoLoadImageAtPath("images/splash_c");
   m_wfBg[1] = bitmapDoLoadImageAtPath("images/falls_bg/falls1_bg");
   m_sheetWfFg[1] = bitmapDoLoadImageTableAtPath("images/falls_fg/falls1_fg");
   m_sheetWfFgYCrush[1] = bitmapDoLoadImageTableAtPath("images/falls_fg_y_crush/falls1_fg");
