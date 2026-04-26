@@ -6,7 +6,7 @@
 #include "board.h"
 #include "peg.h"
 #include "bitmap.h"
-#include "io.h"
+#include "game_io.h"
 #include "input.h"
 #include "sound.h"
 #include "patterns.h"
@@ -186,7 +186,7 @@ void FSMDisplayLevelTitle(const bool newState) {
     pd->system->logToConsole("Hole loading took %i ms", (int)(after - before));
     #endif
   }
-  if (timer++ == timeToWait) return FSMDo(kGameFSM_LevelTitleToStart);
+  if (timer++ == timeToWait) return FSMDo_cascada(kGameFSM_LevelTitleToStart);
 }
 
 void FSMDisplayLevelTitleWFadeIn(const bool newState) {
@@ -198,7 +198,7 @@ void FSMDisplayLevelTitleWFadeIn(const bool newState) {
   }
   if (gameGetFrameCount() % ( (TICK_FREQUENCY/2) / FADE_LEVELS) == 0) { --progress; }
   renderSetFadeLevel(progress < FADE_LEVELS ? progress : FADE_LEVELS-1);
-  if (progress == -1) { return FSMDo(kGameFSM_DisplayLevelTitle); }
+  if (progress == -1) { return FSMDo_cascada(kGameFSM_DisplayLevelTitle); }
 }
 
 void FSMLevelTitleToStart(const bool newState) {
@@ -211,9 +211,9 @@ void FSMLevelTitleToStart(const bool newState) {
   }
   FSMDoCommonScrollTo(-DEVICE_PIX_Y - TURRET_RADIUS, 0, (float)timer/TIME_SPLASH_TO_GAME, EASE_SPLASH_TO_GAME);
   if (timer++ == TIME_SPLASH_TO_GAME) { 
-    if (IOGetIsTutorial()) { return FSMDo(kGameFSM_TutorialScrollDown); }
-    else if (IOIsCredits()) { return FSMDo(kGameFSM_PlayCredits); }
-    else { return FSMDo(kGameFSM_AimMode); }
+    if (IOGetIsTutorial()) { return FSMDo_cascada(kGameFSM_TutorialScrollDown); }
+    else if (IOIsCredits()) { return FSMDo_cascada(kGameFSM_PlayCredits); }
+    else { return FSMDo_cascada(kGameFSM_AimMode); }
   }
 }
 
@@ -224,18 +224,18 @@ void FSMTutorialScrollDown(const bool newState) {
   FSMCommonTurretScrollAndBounceBack(true); // allow control = true
   const float scrollOffsetMax = IOGetCurrentHoleHeight() - DEVICE_PIX_Y; 
   if (gameGetYOffset() > scrollOffsetMax) { ++timer; }
-  if (timer > TICK_FREQUENCY/2) { FSMDo(kGameFSM_TutorialScrollUp); }
+  if (timer > TICK_FREQUENCY/2) { FSMDo_cascada(kGameFSM_TutorialScrollUp); }
 }
 
 void FSMTutorialScrollUp(const bool newState) {
   static uint16_t timer = 0;
   if (newState) { timer = 0; }
 
-  if (inputGetReleased(kButtonA)) { return FSMDo(kGameFSM_AimModeScrollToTop); }
+  if (inputGetReleased(kButtonA)) { return FSMDo_cascada(kGameFSM_AimModeScrollToTop); }
 
   FSMCommonTurretScrollAndBounceBack(true); // allow control = true
   if (gameGetYOffset() < 4) { ++timer; }
-  if (timer > TICK_FREQUENCY/2) { FSMDo(kGameFSM_TutorialFireMarble); }
+  if (timer > TICK_FREQUENCY/2) { FSMDo_cascada(kGameFSM_TutorialFireMarble); }
 }
 
 void FSMTutorialFireMarble(const bool newState) {
@@ -252,7 +252,7 @@ void FSMTutorialFireMarble(const bool newState) {
   FSMCommonTurretScrollAndBounceBack(false); // allow control = FALSE is tutorial only
   //
   const uint8_t fired = FSMCommonMarbleFire(&timer); // Cannot scroll down, so don't need to deal with return code 2
-  if      (fired == 1) { FSMDo(kGameFSM_BallInPlay); }
+  if      (fired == 1) { FSMDo_cascada(kGameFSM_BallInPlay); }
 }
 
 void FSMTutorialGetSpecial(const bool newState) {
@@ -269,7 +269,7 @@ void FSMGameFadeOutQuit(const bool newState) {
   if (gameGetFrameCount() % ( (TICK_FREQUENCY/2) / FADE_LEVELS) == 0) { ++progress; }
   if (progress == FADE_LEVELS) { 
     soundStopSfx(kFountainSfx);
-    return FSMDo(kTitlesFSM_ChooseHoleWFadeIn);
+    return FSMDo_cascada(kTitlesFSM_ChooseHoleWFadeIn);
   }
   renderSetFadeLevel(progress);
 }
@@ -280,7 +280,7 @@ void FSMGameFadeOutReset(const bool newState) {
   if (gameGetFrameCount() % ( (TICK_FREQUENCY/2) / FADE_LEVELS) == 0) { ++progress; }
   if (progress == FADE_LEVELS) { 
     soundStopSfx(kFountainSfx);
-    return FSMDo(kGameFSM_DisplayLevelTitleWFadeIn);
+    return FSMDo_cascada(kGameFSM_DisplayLevelTitleWFadeIn);
   }
   renderSetFadeLevel(progress);
 }
@@ -300,8 +300,8 @@ void FSMAimMode(const bool newState) {
   FSMCommonTurretScrollAndBounceBack(true);
   //
   const uint8_t fired = FSMCommonMarbleFire(&timer); 
-  if      (fired == 1) { FSMDo(kGameFSM_BallInPlay); }
-  else if (fired == 2) { FSMDo(kGameFSM_AimModeScrollToTop); }
+  if      (fired == 1) { FSMDo_cascada(kGameFSM_BallInPlay); }
+  else if (fired == 2) { FSMDo_cascada(kGameFSM_AimModeScrollToTop); }
 }
 
 void FSMAimModeScrollToTop(const bool newState) {
@@ -314,8 +314,8 @@ void FSMAimModeScrollToTop(const bool newState) {
   FSMCommonTurretScrollAndBounceBack(false); // Just move turret, don't influence the scroll
   if (timer++ == TIME_AIM_SCROLL_TO_TOP) {
     gameSetYOffset(gameGetMinimumY(), /*force = */true); 
-    if (IOGetIsTutorial()) return FSMDo(kGameFSM_TutorialFireMarble);
-    else return FSMDo(kGameFSM_AimMode);
+    if (IOGetIsTutorial()) return FSMDo_cascada(kGameFSM_TutorialFireMarble);
+    else return FSMDo_cascada(kGameFSM_AimMode);
   }
 }
 
@@ -342,7 +342,7 @@ void FSMPlayCredits(const bool newState) {
     if (pause >= 5.0f) {
       renderSetFadeLevel( ((int8_t)pause - 5.0f) < FADE_LEVELS-1 ? ((int8_t)pause - 5.0f) : FADE_LEVELS-1 );
       if (pause >= 5.0f + (float)FADE_LEVELS) {
-        return FSMDo(kTitlesFSM_DisplayTitlesWFadeIn);
+        return FSMDo_cascada(kTitlesFSM_DisplayTitlesWFadeIn);
       }
     }
     return;
@@ -372,10 +372,10 @@ void FSMBallInPlay(const bool newState) {
 
   // Focus on ball, check gutter
   const bool guttered = FSMCommonFocusOnLowestBallInPlay(special);
-  if (guttered) { return FSMDo(kGameFSM_BallGutter); }
+  if (guttered) { return FSMDo_cascada(kGameFSM_BallGutter); }
   // Ball stuck -> to stuck
   const bool stuck = FSMCommonGetIsBallStuck(special);
-  if (stuck) { FSMDo(kGameFSM_BallStuck); }
+  if (stuck) { FSMDo_cascada(kGameFSM_BallStuck); }
   // Ball close -> to close up
   const int16_t bgrpip = boardGetRequiredPegsInPlay();
   if (bgrpip == 1) {
@@ -402,13 +402,13 @@ void FSMBallInPlay(const bool newState) {
         // The ball must be travelling towards the final peg to get slowmo.
         // I.e. the distance in this frame must be smaller than the distance in the previous frame
         if (dist < FINAL_PEG_SLOWMO_RADIUS && dist < distanceToFinalPeg) {
-          return FSMDo(kGameFSM_CloseUp);
+          return FSMDo_cascada(kGameFSM_CloseUp);
         }
         distanceToFinalPeg = dist;
       }
     }
   } else if (bgrpip == 0) { // Or straight to toast if zero left
-    return FSMDo(kGameFSM_WinningToastA);
+    return FSMDo_cascada(kGameFSM_WinningToastA);
   }
 }
 
@@ -426,7 +426,7 @@ void FSMBallStuck(const bool newState) {
     ballIsStuck |= cpvlengthsq(v) < BALL_IS_STUCK;
   }
   if (!ballIsStuck || !popped) {
-    return FSMDo(kGameFSM_BallInPlay);
+    return FSMDo_cascada(kGameFSM_BallInPlay);
   }
 }
 
@@ -467,12 +467,12 @@ void FSMCloseUp(const bool newState) {
     m_fizzleTimer = FIZZLE_TIME; // Irrelevent if going to wining toast
     if (stuck) {
       soundDoSfx(kFizzleSfx);
-      return FSMDo(kGameFSM_BallStuck);
+      return FSMDo_cascada(kGameFSM_BallStuck);
     } else if (whichBall == -1 || m_vetoCloseUp) {
       soundDoSfx(kFizzleSfx);
-      return FSMDo(kGameFSM_BallInPlay);
+      return FSMDo_cascada(kGameFSM_BallInPlay);
     } else {
-      return FSMDo(kGameFSM_WinningToastA);
+      return FSMDo_cascada(kGameFSM_WinningToastA);
     }
   }
 
@@ -506,11 +506,11 @@ void FSMWinningToastA(const bool newState) {
   const bool stuck = FSMCommonGetIsBallStuck(special);
   const bool guttered = FSMCommonFocusOnLowestBallInPlay(special);
   if (guttered || stuck) { 
-    return FSMDo(kGameFSM_BallGutter);
+    return FSMDo_cascada(kGameFSM_BallGutter);
   }
 
   if (++timer == TIME_FROM_TOAST_A_TO_TOAST_B) {
-    return FSMDo(kGameFSM_WinningToastB);
+    return FSMDo_cascada(kGameFSM_WinningToastB);
   }
 }
 
@@ -539,7 +539,7 @@ void FSMWinningToastB(const bool newState) {
   const bool guttered = FSMCommonFocusOnLowestBallInPlay(special);
   if (guttered || stuck) { 
     physicsSetTimestepMultiplier(1.0f);
-    return FSMDo(kGameFSM_BallGutter);
+    return FSMDo_cascada(kGameFSM_BallGutter);
   }
 
 }
@@ -557,7 +557,7 @@ void FSMBallGutter(const bool newState) {
       boardDoClearSpecial();
       gameSetYOffset(gameGetMinimumY(), /*force = */true);
       soundDoSfx(kTeleportSfx);
-      return FSMDo(kGameFSM_BallInPlay);
+      return FSMDo_cascada(kGameFSM_BallInPlay);
     }
     boardDoClearSpecial();
     vY = cpBodyGetVelocity(physicsGetBall(0)).y;
@@ -575,11 +575,11 @@ void FSMBallGutter(const bool newState) {
         soundDoSfx(kWompSfx);
       }
       boardResetPegsHit();
-      return FSMDo(kGameFSM_GutterToTurret);
+      return FSMDo_cascada(kGameFSM_GutterToTurret);
     } else { 
       boardResetPegsHit();
       pd->system->setMenuImage(NULL, 0);
-      return FSMDo(kGameFSM_GutterToScores);
+      return FSMDo_cascada(kGameFSM_GutterToScores);
     }
   }
 }
@@ -615,7 +615,7 @@ void FSMGutterToTurret(const bool newState) {
   if (progress >= 1) {
     gameSetYOffset(endY, /*force = */true);
     boardDoBurstPegs(0);
-    FSMDo(kGameFSM_TurretLower);
+    FSMDo_cascada(kGameFSM_TurretLower);
   }
 }
 
@@ -670,9 +670,9 @@ void FSMTurretLower(const bool newState) {
   if (progress >= 1) {
     gameSetYOffset(endY, /*force = */true);
     gameSetMinimumY(endY);
-    if (IOGetIsTutorial() && boardGetSpecialPegsInPlay()) { return FSMDo(kGameFSM_TutorialGetSpecial); }
-    else if (IOGetIsTutorial()) { return FSMDo(kGameFSM_TutorialGetRequired); }
-    else { return FSMDo(kGameFSM_AimMode); }
+    if (IOGetIsTutorial() && boardGetSpecialPegsInPlay()) { return FSMDo_cascada(kGameFSM_TutorialGetSpecial); }
+    else if (IOGetIsTutorial()) { return FSMDo_cascada(kGameFSM_TutorialGetRequired); }
+    else { return FSMDo_cascada(kGameFSM_AimMode); }
   }
 }
 
@@ -686,7 +686,7 @@ void FSMGutterToScores(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(origin, DEVICE_PIX_Y*5, (float)timer/TIME_GUTTER_TO_SCORE, EASE_GUTTER_TO_SCORE);
-  if (timer++ == TIME_GUTTER_TO_SCORE) { return FSMDo(kGameFSM_ScoresAnimationA); }
+  if (timer++ == TIME_GUTTER_TO_SCORE) { return FSMDo_cascada(kGameFSM_ScoresAnimationA); }
 }
 
 void FSMScoresAnimationA(const bool newState) {
@@ -740,8 +740,8 @@ void FSMScoresAnimationA(const bool newState) {
   }
   if (++timer % TIME_BALL_DROP_DELAY == 0 && activeBalls < ballsToShow) { activeBalls++; }
   if (!moving) {
-    if (m_holeScoreID == -1) { return FSMDo(kGameFSM_DisplayScores); }
-    else                     { return FSMDo(kGameFSM_ScoresAnimationB); }
+    if (m_holeScoreID == -1) { return FSMDo_cascada(kGameFSM_DisplayScores); }
+    else                     { return FSMDo_cascada(kGameFSM_ScoresAnimationB); }
   }
 }
 
@@ -766,7 +766,7 @@ void FSMScoresAnimationB(const bool newState) {
     renderDoAddEndBlast( cpv(x,y) );
     soundDoSfx(kPopSfx1);
   }
-  if (++m_holeScoreTimer == TIME_SCORE_ANIMATION_B) { return FSMDo(kGameFSM_DisplayScores); }
+  if (++m_holeScoreTimer == TIME_SCORE_ANIMATION_B) { return FSMDo_cascada(kGameFSM_DisplayScores); }
 }
 
 
@@ -782,8 +782,8 @@ void FSMDisplayScores(const bool newState) {
   offset *= 0.9f;
   gameSetYOffset(DEVICE_PIX_Y*5 + offset, true); // Y crush is not relevent here - no background
 
-  if      (offset >  16.0f) return FSMDo(kGameFSM_ScoresToSplash);
-  else if (offset < -16.0f) return FSMDo(kGameFSM_ScoresToTryAgain);
+  if      (offset >  16.0f) return FSMDo_cascada(kGameFSM_ScoresToSplash);
+  else if (offset < -16.0f) return FSMDo_cascada(kGameFSM_ScoresToTryAgain);
 }
 
 void FSMScoresToTryAgain(const bool newState) {
@@ -795,7 +795,7 @@ void FSMScoresToTryAgain(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(start, -DEVICE_PIX_Y - TURRET_RADIUS, (float)timer/TIME_SCORE_TO_TRY_AGAIN, EASE_SCORE_TO_TRY_AGAIN);
-  if (timer++ == TIME_SCORE_TO_TRY_AGAIN) { return FSMDo(kGameFSM_DisplayLevelTitle); }
+  if (timer++ == TIME_SCORE_TO_TRY_AGAIN) { return FSMDo_cascada(kGameFSM_DisplayLevelTitle); }
 }
 
 void FSMScoresToSplash(const bool newState) {
@@ -808,13 +808,13 @@ void FSMScoresToSplash(const bool newState) {
     IODoNextHoleWithLevelWrap();
     if (!IOGetCurrentLevel() && !IOGetCurrentHole()) {
       // We've wrapped! Show credits!
-      return FSMDo(kGameFSM_ToGameCreditsTitle);
+      return FSMDo_cascada(kGameFSM_ToGameCreditsTitle);
     }
     bitmapDoUpdateLevelTitle();
     bitmapDoUpdateGameInfoTopper();
   }
   FSMDoCommonScrollTo(start, DEVICE_PIX_Y*6, (float)timer/TIME_SCORE_TO_LEVELTITLE, EASE_SCORE_TO_SPLASH);
-  if (timer++ == TIME_SCORE_TO_LEVELTITLE) { return FSMDo(kGameFSM_DisplayLevelTitle); }
+  if (timer++ == TIME_SCORE_TO_LEVELTITLE) { return FSMDo_cascada(kGameFSM_DisplayLevelTitle); }
 }
 
 void FSMToGameCreditsTitle(const bool newState) { // Note: Separate Game and Title versions of this
@@ -831,6 +831,6 @@ void FSMToGameCreditsTitle(const bool newState) { // Note: Separate Game and Tit
   }
   FSMDoCommonScrollTo(start, -DEVICE_PIX_Y - TURRET_RADIUS, (float)timer/TIME_SCORE_TO_TRY_AGAIN, EASE_SCORE_TO_TRY_AGAIN);
   if (timer++ == TIME_SCORE_TO_TRY_AGAIN) { 
-    return FSMDo(kGameFSM_DisplayLevelTitle);
+    return FSMDo_cascada(kGameFSM_DisplayLevelTitle);
   }
 }

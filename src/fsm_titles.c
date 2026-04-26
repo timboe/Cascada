@@ -3,7 +3,7 @@
 #include "easing.h"
 #include "render.h"
 #include "bitmap.h"
-#include "io.h"
+#include "game_io.h"
 #include "input.h"
 #include "sound.h"
 #include "patterns.h"
@@ -47,9 +47,11 @@ void FSMDisplayTitles(const bool newState) {
     // Good to keep this a noop if possible
     // Reset can go in FSMDisplayTitlesWFadeIn
   }
-  if (!pd->system->isCrankDocked() && !IOGetIsPreloading()) {
-    return FSMDo(kTitlesFSM_TitlesToChoosePlayer);
-  }
+  #ifndef SDL2API
+    if (!pd->system->isCrankDocked() && !IOGetIsPreloading()) {
+      return FSMDo_cascada(kTitlesFSM_TitlesToChoosePlayer);
+    }
+  #endif
 }
 
 void FSMDisplayTitlesWFadeIn(const bool newState) {
@@ -64,7 +66,7 @@ void FSMDisplayTitlesWFadeIn(const bool newState) {
   renderSetFadeLevel(progress < FADE_LEVELS ? progress : FADE_LEVELS-1);
   if (progress == -1) {
     gameDoPopulateMenuTitles();
-    return FSMDo(kTitlesFSM_DisplayTitles);
+    return FSMDo_cascada(kTitlesFSM_DisplayTitles);
   }
 }
 
@@ -75,7 +77,7 @@ void FSMTitlesToChoosePlayer(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(0, DEVICE_PIX_Y, (float)timer/TIME_TITLE_TRANSITION, EASE_TITLE_DOWNWARDS);
-  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo(kTitlesFSM_ChoosePlayer); }
+  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo_cascada(kTitlesFSM_ChoosePlayer); }
 }
 
 void FSMChoosePlayer(const bool newState) {
@@ -116,7 +118,7 @@ void FSMChoosePlayerToChooseLevel(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(DEVICE_PIX_Y, DEVICE_PIX_Y*2, (float)timer/TIME_TITLE_TRANSITION, EASE_TITLE_DOWNWARDS);
-  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo(kTitlesFSM_ChooseLevel); }
+  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo_cascada(kTitlesFSM_ChooseLevel); }
 }
 
 void FSMChooseLevel(const bool newState) {
@@ -150,7 +152,7 @@ void FSMChooseLevelToChooseHole(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(DEVICE_PIX_Y*2, DEVICE_PIX_Y*3, (float)timer/TIME_TITLE_TRANSITION, EASE_TITLE_DOWNWARDS);
-  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo(kTitlesFSM_ChooseHole); }
+  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo_cascada(kTitlesFSM_ChooseHole); }
 }
 
 void FSMChooseLevelToChoosePlayer(const bool newState) {
@@ -161,7 +163,7 @@ void FSMChooseLevelToChoosePlayer(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(DEVICE_PIX_Y*2, DEVICE_PIX_Y, (float)timer/TIME_TITLE_TRANSITION, EASE_TITLE_UPWARDS);
-  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo(kTitlesFSM_ChoosePlayer); }
+  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo_cascada(kTitlesFSM_ChoosePlayer); }
 }
 
 void FSMChooseHole(const bool newState) {
@@ -193,7 +195,7 @@ void FSMChooseHoleWFadeIn(const bool newState) {
   }
   if (gameGetFrameCount() % ( (TICK_FREQUENCY/2) / FADE_LEVELS) == 0) { --progress; }
   renderSetFadeLevel(progress < FADE_LEVELS ? progress : FADE_LEVELS - 1);
-  if (progress == -1) { return FSMDo(kTitlesFSM_ChooseHole); }
+  if (progress == -1) { return FSMDo_cascada(kTitlesFSM_ChooseHole); }
 }
 
 void FSMChooseHoleToLevelTitle(const bool newState) {
@@ -206,7 +208,7 @@ void FSMChooseHoleToLevelTitle(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(DEVICE_PIX_Y*3, DEVICE_PIX_Y*5, (float)timer/TIME_TITLE_HOLE_TO_LEVELTITLE, EASE_TITLE_HOLE_TO_SPLASH);
-  if (timer++ == TIME_TITLE_HOLE_TO_LEVELTITLE) { return FSMDo(kGameFSM_DisplayLevelTitle); }
+  if (timer++ == TIME_TITLE_HOLE_TO_LEVELTITLE) { return FSMDo_cascada(kGameFSM_DisplayLevelTitle); }
 }
 
 void FSMChooseHoleToChooseLevel(const bool newState) {
@@ -218,7 +220,7 @@ void FSMChooseHoleToChooseLevel(const bool newState) {
     soundDoSfx(kWhooshSfx1);
   }
   FSMDoCommonScrollTo(DEVICE_PIX_Y*3, DEVICE_PIX_Y*2, (float)timer/TIME_TITLE_TRANSITION, EASE_TITLE_UPWARDS);
-  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo(kTitlesFSM_ChooseLevel); }
+  if (timer++ == TIME_TITLE_TRANSITION) { return FSMDo_cascada(kTitlesFSM_ChooseLevel); }
 }
 
 void FSMToTitlesCreditsTitle(const bool newState) {  // Note: Separate Game and Title versions of this
@@ -241,6 +243,6 @@ void FSMToTitlesCreditsTitle(const bool newState) {  // Note: Separate Game and 
   FSMDoCommonScrollTo(origin, DEVICE_PIX_Y*5, (float)timer/TIME_TITLE_HOLE_TO_LEVELTITLE, EASE_TITLE_HOLE_TO_SPLASH);
   if (timer++ == TIME_TITLE_HOLE_TO_LEVELTITLE) { 
     soundPlayMusic(10);
-    return FSMDo(kGameFSM_DisplayLevelTitle);
+    return FSMDo_cascada(kGameFSM_DisplayLevelTitle);
   }
 }

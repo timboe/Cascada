@@ -4,7 +4,7 @@
 
 // const static uint8_t WF_BG_OFFSET[MAX_LEVELS] = {0};
 
-void bitmapDoInit(void);
+void bitmapDoInit_cascada(void);
 
 void bitmapSetRoobert10(void);
 void bitmapSetRoobert24(void);

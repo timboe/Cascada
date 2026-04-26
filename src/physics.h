@@ -3,7 +3,7 @@
 #include "fsm.h"
 #include "chipmunk/chipmunk.h"
 
-void physicsDoInit(void);
+void physicsDoInit_cascada(void);
 
 void physicsDoUpdate(const int32_t fc, const enum FSM_t fsm);
 

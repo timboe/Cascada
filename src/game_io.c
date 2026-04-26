@@ -1,4 +1,4 @@
-#include "io.h"
+#include "game_io.h"
 #include "fsm.h"
 #include "render.h"
 #include "input.h"
@@ -378,7 +378,7 @@ void IODecodeError(json_decoder* jd, const char* error, int linenum) {
   #ifdef DEV
   pd->system->logToConsole("decode error line %i: %s", linenum, error);
   #endif
-  FSMDo(kTitlesFSM_DisplayTitles);
+  FSMDo_cascada(kTitlesFSM_DisplayTitles);
 }
 
 ///
@@ -736,7 +736,7 @@ void IODoLoadCurrentHole() {
     #ifdef DEV
     pd->system->error("IODoLoadCurrentHole CANNOT FIND LEVEL %i %i", (int)m_level+1, (int)m_hole+1);
     #endif
-    FSMDo(kTitlesFSM_DisplayTitles);
+    FSMDo_cascada(kTitlesFSM_DisplayTitles);
     return;
   }
   static json_decoder jd = {

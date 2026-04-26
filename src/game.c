@@ -6,7 +6,7 @@
 #include "sound.h"
 #include "input.h"
 #include "fsm.h"
-#include "io.h"
+#include "game_io.h"
 #include "physics.h"
 #include "sshot.h"
 
@@ -44,7 +44,7 @@ void gameDoResetPreviousWaterfall(void) {
   m_previousWaterfallBg = IOGetCurrentHoleWaterfallBackground(FSMGetGameMode());
 }
 
-int gameLoop(void* _data) {
+int gameLoop_cascada(void* _data) {
   pd->graphics->setBackgroundColor(kColorBlack);
   // if (FSMGet() == kGameFSM_GutterToTurret) pd->system->logToConsole(">>> gameLoop FC (loop start) %i", gameGetFrameCount());
 
@@ -66,14 +66,14 @@ int gameLoop(void* _data) {
       IODoNextHoleWithLevelWrap();
       if (IOGetCurrentHole() == 0 && IOGetCurrentLevel() == 0) {
         doingScreenshots = false;
-        FSMDo(kTitlesFSM_DisplayTitles); // Reset
+        FSMDo_cascada(kTitlesFSM_DisplayTitles); // Reset
         gameSetYOffset(0, true);
         return 1;
       }
     } 
     inputSetCrankAngle(180.0f);
-    FSMDo(kGameFSM_DisplayLevelTitle); // To load the level
-    FSMDo(kGameFSM_AimMode); // To be rendering the level
+    FSMDo_cascada(kGameFSM_DisplayLevelTitle); // To load the level
+    FSMDo_cascada(kGameFSM_AimMode); // To be rendering the level
     boardDoUpdate(); // To have called update at least once on elliptic and line peg paths
     screenShotInit();
     return 1;
@@ -128,7 +128,7 @@ void menuOptionsCallbackQuitHole(void* _unused) {
   gameMenuStateSafetyReset();
   pd->system->setMenuImage(NULL, 0);
   pd->system->removeAllMenuItems();
-  FSMDo(kGameFSM_GameFadeOutQuit);
+  FSMDo_cascada(kGameFSM_GameFadeOutQuit);
 }
 
 void menuOptionsCallbackResetHole(void* _unused) {
@@ -138,7 +138,7 @@ void menuOptionsCallbackResetHole(void* _unused) {
   gameMenuStateSafetyReset();
   pd->system->setMenuImage(NULL, 0);
   pd->system->removeAllMenuItems();
-  FSMDo(kGameFSM_GameFadeOutReset);
+  FSMDo_cascada(kGameFSM_GameFadeOutReset);
 }
 
 void menuOptionsCallbackCredits(void* _unused) {
@@ -147,7 +147,7 @@ void menuOptionsCallbackCredits(void* _unused) {
   #endif
   gameMenuStateSafetyReset();
   pd->system->removeAllMenuItems();
-  FSMDo(kTitlesFSM_ToTitleCreditsTitle);
+  FSMDo_cascada(kTitlesFSM_ToTitleCreditsTitle);
 }
 
 void menuOptionsCallbackAudio(void* userData) {

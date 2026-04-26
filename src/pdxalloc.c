@@ -3,16 +3,22 @@
 #include "pdxalloc.h"
 #include "constants.h"
 
-PlaydateAPI* pd = NULL;
+#ifdef SDL2API
+  #include "../srcgame/game.h"
+#else  
+  PlaydateAPI* pd = NULL;
+#endif
 
 static void (*pdxlogf)(const char*, ...);
 
 /// ///
 
-void setPDPtr(PlaydateAPI* p) {
-	pd = p;
-	pdxlogf = p->system->logToConsole;
-}
+#ifndef SDL2API
+	void setPDPtr(PlaydateAPI* p) {
+		pd = p;
+		pdxlogf = p->system->logToConsole;
+	}
+#endif
 
 void* pdxalloc(size_t count, size_t size) {
 	void* retval = pd->system->realloc(NULL, count * size);

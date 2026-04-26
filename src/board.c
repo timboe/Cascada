@@ -1,7 +1,7 @@
 #include "board.h"
 #include "easing.h"
 #include "util.h"
-#include "io.h"
+#include "game_io.h"
 
 struct Peg_t m_pegs[MAX_PEGS];
 
@@ -50,7 +50,7 @@ uint16_t boardGetSpecialPegsInPlay(void) { // This is not often needed and is no
   return count;
 }
 
-void boardDoInit(void) {
+void boardDoInit_cascada(void) {
   memset(&m_pegs, 0, sizeof(struct Peg_t) * MAX_PEGS);
   for (int i = 0; i < MAX_PEGS; ++i) {
     m_pegs[i].id = i;

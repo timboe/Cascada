@@ -1,7 +1,7 @@
 #include "bitmap.h"
 #include "input.h"
 #include "util.h"
-#include "io.h"
+#include "game_io.h"
 #include "peg.h"
 #include "patterns.h"
 
@@ -1202,7 +1202,7 @@ void bitmapDoPreloadM(const uint8_t n) {
   }
 }
 
-void bitmapDoInit(void) {
+void bitmapDoInit_cascada(void) {
   // Load critical bitmaps
   m_fontRoobert10 = bitmapDoLoadFontAtPath("fonts/Roobert-10-Bold");
   m_headerImage = bitmapDoLoadImageAtPath("images/splash");

@@ -9,11 +9,11 @@ enum FSM_t m_FSM = (enum FSM_t)0;
 enum FSM_t FSMGet(void) { return m_FSM; }
 
 enum FSM_t FSMUpdate(void) { 
-  FSMDo(m_FSM);
+  FSMDo_cascada(m_FSM);
   return m_FSM;
 }
 
-void FSMDo(const enum FSM_t transitionTo) {
+void FSMDo_cascada(const enum FSM_t transitionTo) {
   bool newState = (m_FSM != transitionTo);
   if (newState) { 
     m_FSM = transitionTo;

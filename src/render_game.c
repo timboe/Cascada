@@ -4,7 +4,7 @@
 #include "board.h"
 #include "peg.h"
 #include "sshot.h"
-#include "io.h"
+#include "game_io.h"
 #include "sound.h"
 
 uint16_t m_ballPootRadius = 0.0f;

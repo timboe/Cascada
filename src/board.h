@@ -51,7 +51,7 @@ struct LinearLoader_t {
   int16_t pathY[MAX_LINEAR_PATH_SEGMENTS];
 };
 
-void boardDoInit(void);
+void boardDoInit_cascada(void);
 
 void boardDoTestLevel(void);
 

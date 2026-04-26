@@ -1,6 +1,6 @@
 #include "sshot.h"
 #include "render.h"
-#include "io.h"
+#include "game_io.h"
 
 #ifdef TAKE_SCREENSHOTS
 

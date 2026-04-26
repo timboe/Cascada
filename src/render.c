@@ -1,7 +1,7 @@
 #include <math.h>
 #include "render.h"
 #include "bitmap.h"
-#include "io.h"
+#include "game_io.h"
 #include "input.h"
 #include "fsm.h"
 #include "board.h"

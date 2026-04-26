@@ -1,5 +1,5 @@
 #include "sound.h"
-#include "io.h"
+#include "game_io.h"
 #include "board.h"
 
 bool m_doSfx = true;
@@ -150,7 +150,7 @@ void soundPlayMusic(const uint8_t id) {
   pd->sound->fileplayer->play(m_music[m_trackPlaying], 1);
 }
 
-void soundDoInit() {
+void soundDoInit_cascada() {
   m_audioSample[kPlingSfx1] = pd->sound->sample->load("fx/760664__gutertonwav__guterton-cup-ding__1"); // -10%
   m_audioSample[kPlingSfx2] = pd->sound->sample->load("fx/760664__gutertonwav__guterton-cup-ding__2"); // -5%
   m_audioSample[kPlingSfx3] = pd->sound->sample->load("fx/760664__gutertonwav__guterton-cup-ding__3"); // Original

@@ -4,7 +4,7 @@
 #include "board.h"
 #include "sshot.h"
 #include "util.h"
-#include "io.h"
+#include "game_io.h"
 #include "sound.h"
 
 void pegDoUpdateAngle(struct Peg_t* p, const float angle);

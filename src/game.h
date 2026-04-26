@@ -7,7 +7,7 @@
 #include "pdxalloc.h"
 #include "constants.h"
 
-int gameLoop(void* data);
+int gameLoop_cascada(void* data);
 
 int32_t gameGetFrameCount(void);
 void gameDoResetFrameCount(void);

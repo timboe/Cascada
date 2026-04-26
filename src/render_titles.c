@@ -1,6 +1,6 @@
 #include "render.h"
 #include "bitmap.h"
-#include "io.h"
+#include "game_io.h"
 
 float m_numeralOffset = 0.0;
 
@@ -36,9 +36,15 @@ void renderTitlesHeader(const int32_t fc) {
     pd->graphics->drawLine(DEVICE_PIX_X/4, (4*DEVICE_PIX_Y)/5, (3*DEVICE_PIX_X)/4, (4*DEVICE_PIX_Y)/5, TITLETEXT_HEIGHT, kColorBlack);
     pd->graphics->drawLine(DEVICE_PIX_X/4, (4*DEVICE_PIX_Y)/5, x2, (4*DEVICE_PIX_Y)/5, TITLETEXT_HEIGHT/2, kColorWhite);
   } else {
-    if (pd->system->isCrankDocked() && !yOff && (fc / (TICK_FREQUENCY / 2)) % 2) { 
-      pd->graphics->drawBitmap(bitmapGetUseTheCrank(), DEVICE_PIX_X - 88, DEVICE_PIX_Y - 51 - 16, kBitmapUnflipped);
-    }
+    #ifdef SDL2API
+      if (!yOff && (fc / (TICK_FREQUENCY / 2)) % 2) { 
+        pd->graphics->drawBitmap(bitmapGetFwBkwIcon(1), DEVICE_PIX_X - 88, DEVICE_PIX_Y - 51 - 16, kBitmapUnflipped);
+      }
+    #else
+      if (pd->system->isCrankDocked() && !yOff && (fc / (TICK_FREQUENCY / 2)) % 2) { 
+        pd->graphics->drawBitmap(bitmapGetUseTheCrank(), DEVICE_PIX_X - 88, DEVICE_PIX_Y - 51 - 16, kBitmapUnflipped);
+      }
+    #endif
   }
 }
 

@@ -59,7 +59,7 @@ void physicsDoLaunchBall(const float strength) {
   }
 }
 
-void physicsDoInit(void) {
+void physicsDoInit_cascada(void) {
   FILTER_BALL.categories |= FLAG_BALL;
   FILTER_BALL.mask |= FLAG_BALL | FLAG_WALL | FLAG_PEG;
 

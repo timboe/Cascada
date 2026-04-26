@@ -81,7 +81,7 @@ enum SfxSample {
   kNSFX
 };
 
-void soundDoInit(void);
+void soundDoInit_cascada(void);
 
 void soundWaterfallDoInit(void);
 

@@ -2,7 +2,7 @@
 #include "game.h"
 #include "fsm.h"
 
-void inputDoInit(void);
+void inputDoInit_cascada(void);
 
 void inputDoHandle(const enum FSM_t fsm, const enum GameMode_t gm);
 

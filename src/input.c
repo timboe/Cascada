@@ -3,7 +3,7 @@
 #include "render.h"
 #include "sound.h"
 #include "fsm.h"
-#include "io.h"
+#include "game_io.h"
 #include "physics.h"
 #include "board.h"
 #include "sshot.h"
@@ -20,7 +20,7 @@ void inputHandlerClick(const enum FSM_t fsm, const enum GameMode_t gm, uint32_t 
 
 /// ///
 
-void inputDoInit(void) {
+void inputDoInit_cascada(void) {
   m_crankAngle = pd->system->getCrankAngle();
   m_crankNoiseAngle = (uint8_t)( m_crankAngle / CRANK_NOISE_ANGLE);
 }
@@ -43,20 +43,20 @@ void inputHandlerClick(const enum FSM_t fsm, const enum GameMode_t gm, const uin
 
 void inputHandleTitles(const enum FSM_t fsm, const uint32_t buttonPressed) {
   if (fsm == kTitlesFSM_DisplayTitles && !IOGetIsPreloading()) { // Any button
-    FSMDo(kTitlesFSM_TitlesToChoosePlayer);
+    FSMDo_cascada(kTitlesFSM_TitlesToChoosePlayer);
     return;
   }
   if (kButtonA == buttonPressed) {
     switch (fsm) {
-      case kTitlesFSM_ChoosePlayer: FSMDo(kTitlesFSM_ChoosePlayerToChooseLevel); return;
-      case kTitlesFSM_ChooseLevel: FSMDo(kTitlesFSM_ChooseLevelToChooseHole); return;
-      case kTitlesFSM_ChooseHole: FSMDo(kTitlesFSM_ChooseHoleToLevelTitle); return;
+      case kTitlesFSM_ChoosePlayer: FSMDo_cascada(kTitlesFSM_ChoosePlayerToChooseLevel); return;
+      case kTitlesFSM_ChooseLevel: FSMDo_cascada(kTitlesFSM_ChooseLevelToChooseHole); return;
+      case kTitlesFSM_ChooseHole: FSMDo_cascada(kTitlesFSM_ChooseHoleToLevelTitle); return;
       default: break;
     }
   } else if (kButtonB == buttonPressed) {
     switch (fsm) {
-      case kTitlesFSM_ChooseLevel: FSMDo(kTitlesFSM_ChooseLevelToChoosePlayer); return;
-      case kTitlesFSM_ChooseHole: FSMDo(kTitlesFSM_ChooseHoleToChooseLevel); return;
+      case kTitlesFSM_ChooseLevel: FSMDo_cascada(kTitlesFSM_ChooseLevelToChoosePlayer); return;
+      case kTitlesFSM_ChooseHole: FSMDo_cascada(kTitlesFSM_ChooseHoleToChooseLevel); return;
       default: break;
     }
   }
@@ -64,8 +64,8 @@ void inputHandleTitles(const enum FSM_t fsm, const uint32_t buttonPressed) {
 
 void inputHandleGame(const enum FSM_t fsm, const uint32_t buttonPressed) {
   if (fsm == kGameFSM_DisplayScores) {
-    if      (kButtonB == buttonPressed) { FSMDo(kGameFSM_ScoresToSplash);   }
-    else if (kButtonA == buttonPressed) { FSMDo(kGameFSM_ScoresToTryAgain); }
+    if      (kButtonB == buttonPressed) { FSMDo_cascada(kGameFSM_ScoresToSplash);   }
+    else if (kButtonA == buttonPressed) { FSMDo_cascada(kGameFSM_ScoresToTryAgain); }
   }
 }
 
