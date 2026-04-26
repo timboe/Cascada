@@ -246,7 +246,11 @@ void renderCommonBackground(const enum FSM_t fsm, const enum GameMode_t gm) {
   // pd->system->logToConsole("RCB FG cur:%i prev:%i, BG cur:%i prev%i", currentWfFg, prevWfFg, currentWfBg, prevWfBg);
 
   const int32_t yOffset = gameGetYOffset();
-  const bool yCrush = !gameGetYClamped();
+  #ifdef SDL2API
+    const bool yCrush = false;
+  #else
+    const bool yCrush = !gameGetYClamped();
+  #endif
   const uint16_t chh = IOGetCurrentHoleHeight();
   const uint16_t maxY = (FSMGetGameMode() == kTitles ? (WF_MAX_HEIGHT * DEVICE_PIX_Y) : chh);
   const uint16_t wfSheetSize = currentWfFg < FIRST_CUSTOM_WF_ID ? WFSHEET_SIZE_Y : CUSTOM_WFSHEET_SIZE_Y;
