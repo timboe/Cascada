@@ -9,7 +9,7 @@
 #include "sound.h"
 #include "patterns.h"
 
-float m_trauma = 0.0f, m_decay = 0.0f;
+float m_trauma_cascada = 0.0f, m_decay_cascada = 0.0f;
 float m_cTraumaAngle = 0.0f, m_sTraumaAngle;
 
 cpVect m_backLines[N_BACKLINES];
@@ -73,9 +73,9 @@ void renderAddTrauma(const float amount) {
 #ifdef DISABLE_TRAUMA
   return;
 #endif
-  m_trauma += amount;
-  m_trauma *= -1;
-  m_decay = amount;
+  m_trauma_cascada += amount;
+  m_trauma_cascada *= -1;
+  m_decay_cascada = amount;
   // Trauma currently only in the Y direction
   const float traumaAngle = 0; // M_2PIf / (rand() % 255);
   m_cTraumaAngle = cosf(traumaAngle) * TRAUMA_AMPLIFICATION;
@@ -83,10 +83,10 @@ void renderAddTrauma(const float amount) {
 }
 
 void renderDo(const int32_t fc, const enum FSM_t fsm, const enum GameMode_t gm) {
-  if (!pd->system->getReduceFlashing() && m_decay > 0.0f) {
-    m_decay -= TRAUMA_DECAY;
-    m_trauma += (m_trauma > 0 ? -m_decay : m_decay);
-    pd->display->setOffset(m_trauma * m_sTraumaAngle, m_trauma * m_cTraumaAngle);
+  if (!pd->system->getReduceFlashing() && m_decay_cascada > 0.0f) {
+    m_decay_cascada -= TRAUMA_DECAY;
+    m_trauma_cascada += (m_trauma_cascada > 0 ? -m_decay_cascada : m_decay_cascada);
+    pd->display->setOffset(m_trauma_cascada * m_sTraumaAngle, m_trauma_cascada * m_cTraumaAngle);
   } else {
     pd->display->setOffset(0, 0);
   }

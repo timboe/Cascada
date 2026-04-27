@@ -93,8 +93,8 @@ LCDBitmapTable* m_tutorialArrowsTable;
 LCDBitmapTable* m_fwBkwIconTable;
 LCDBitmapTable* m_turretBodyTable;
 
-LCDFont* m_fontRoobert24;
-LCDFont* m_fontRoobert10;
+LCDFont* m_fontRoobert24_cascada;
+LCDFont* m_fontRoobert10_cascada;
 LCDFont* m_fontGreatvibes24;
 LCDFont* m_fontGreatvibes109;
 
@@ -465,17 +465,17 @@ LCDBitmap* bitmapGetTurretBarrel(void) {
 
 LCDBitmap* bitmapGetSpecial(const enum PegSpecial_t special) { return m_specialTextBitmap[(uint8_t)special]; }
 
-void bitmapSetRoobert10(void) { pd->graphics->setFont(m_fontRoobert10); }
+void bitmapSetRoobert10(void) { pd->graphics->setFont(m_fontRoobert10_cascada); }
 
-void bitmapSetRoobert24(void) { pd->graphics->setFont(m_fontRoobert24); }
+void bitmapSetRoobert24(void) { pd->graphics->setFont(m_fontRoobert24_cascada); }
 
 void bitmapSetGreatVibes24(void) { pd->graphics->setFont(m_fontGreatvibes24); }
 
 void bitmapSetGreatVibes109(void) { pd->graphics->setFont(m_fontGreatvibes109); }
 
-LCDFont* bitmapGetRoobert10(void) { return m_fontRoobert10; }
+LCDFont* bitmapGetRoobert10(void) { return m_fontRoobert10_cascada; }
 
-LCDFont* bitmapGetRoobert24(void) { return m_fontRoobert24; }
+LCDFont* bitmapGetRoobert24(void) { return m_fontRoobert24_cascada; }
 
 LCDFont* bitmapGetGreatVibes24(void) { return m_fontGreatvibes24; }
 
@@ -934,7 +934,7 @@ void bitmapDoPreloadA(void) {
     m_endBlastTable[i] =  bitmapDoLoadImageTableAtPath(text);
   }
 
-  m_fontRoobert24 = bitmapDoLoadFontAtPath("fonts/Roobert-24-Medium");
+  m_fontRoobert24_cascada = bitmapDoLoadFontAtPath("fonts/Roobert-24-Medium");
   m_fontGreatvibes24 = bitmapDoLoadFontAtPath("fonts/GreatVibes-Regular-24");
   m_fontGreatvibes109 = bitmapDoLoadFontAtPath("fonts/GreatVibes-Regular-109");
   pd->graphics->setFont(m_fontGreatvibes24);
@@ -1204,7 +1204,7 @@ void bitmapDoPreloadM(const uint8_t n) {
 
 void bitmapDoInit_cascada(void) {
   // Load critical bitmaps
-  m_fontRoobert10 = bitmapDoLoadFontAtPath("fonts/Roobert-10-Bold");
+  m_fontRoobert10_cascada = bitmapDoLoadFontAtPath("fonts/Roobert-10-Bold");
   m_headerImage = bitmapDoLoadImageAtPath("images/splash_c");
   m_wfBg[1] = bitmapDoLoadImageAtPath("images/falls_bg/falls1_bg");
   m_sheetWfFg[1] = bitmapDoLoadImageTableAtPath("images/falls_fg/falls1_fg");

@@ -9,11 +9,11 @@
   PlaydateAPI* pd = NULL;
 #endif
 
-static void (*pdxlogf)(const char*, ...);
-
 /// ///
 
 #ifndef SDL2API
+  static void (*pdxlogf)(const char*, ...);
+
 	void setPDPtr(PlaydateAPI* p) {
 		pd = p;
 		pdxlogf = p->system->logToConsole;

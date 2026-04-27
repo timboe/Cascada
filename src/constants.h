@@ -8,8 +8,11 @@
 #define DISABLE_TRAUMA 1
 //#define DISABLE_FREEZE 1
 
-#define MAX(a,b) ((a) > (b) ? a : b)
-#define MIN(a,b) ((a) < (b) ? a : b)
+#ifndef MIN
+  #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#endif
+
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 /// ///
 

@@ -49,7 +49,7 @@ uint16_t m_lineContainerID = 0;
 
 uint16_t m_preloading = 0;
 
-uint16_t m_player = 0;
+uint16_t m_player_cascada = 0;
 uint16_t m_level = 0;
 uint16_t m_hole = 0;
 
@@ -164,27 +164,27 @@ uint16_t IOGetCurrentHoleWaterfallForeground(const enum GameMode_t gm) {
   return IOGetWaterfallForeground(m_level, (gm == kTitles ? 0 : m_hole));
 }
 
-uint16_t IOGetCurrentPlayer(void) { return m_player; }
+uint16_t IOGetCurrentPlayer(void) { return m_player_cascada; }
 
 void IODoPreviousPlayer(void) {
-  if (!m_player) { m_player = MAX_PLAYERS - 1; }
-  else --m_player;
+  if (!m_player_cascada) { m_player_cascada = MAX_PLAYERS - 1; }
+  else --m_player_cascada;
   #ifdef DEV
-  pd->system->logToConsole("Now player %i - got to un-played hole", (int)m_player+1);
+  pd->system->logToConsole("Now player %i - got to un-played hole", (int)m_player_cascada+1);
   #endif
   IODoGoToNextUnplayedLevel();
 }
 
 void IODoNextPlayer(void) {
-  m_player = (m_player + 1) % MAX_PLAYERS;
+  m_player_cascada = (m_player_cascada + 1) % MAX_PLAYERS;
   #ifdef DEV
-  pd->system->logToConsole("Now player %i - got to un-played hole", (int)m_player+1);
+  pd->system->logToConsole("Now player %i - got to un-played hole", (int)m_player_cascada+1);
   #endif
   IODoGoToNextUnplayedLevel();
 }
 
 void IOResetPlayerSave(const uint16_t player) {
-  const uint8_t currentPlayer = m_player;
+  const uint8_t currentPlayer = m_player_cascada;
   for (int l = 0; l < MAX_LEVELS; ++l) {
     for (int h = 0; h < MAX_HOLES; ++h) {
       m_persistent_data[player][l][h] = 0; 
@@ -240,7 +240,7 @@ void IODoPreviousLevel(void) {
   m_level = IOGetPreviousLevel();
   soundDoWaterfall(m_level);
   #ifdef DEV
-  pd->system->logToConsole("Pre level called (player %i, level %i, hole %i)", (int)m_player+1, (int)m_level+1, (int)m_hole+1);
+  pd->system->logToConsole("Pre level called (player %i, level %i, hole %i)", (int)m_player_cascada+1, (int)m_level+1, (int)m_hole+1);
   #endif
 }
 
@@ -248,21 +248,21 @@ void IODoNextLevel(void) {
   m_level = IOGetNextLevel();
   soundDoWaterfall(m_level);
   #ifdef DEV
-  pd->system->logToConsole("Next level called (player %i, level %i, hole %i)", (int)m_player+1, (int)m_level+1, (int)m_hole+1);
+  pd->system->logToConsole("Next level called (player %i, level %i, hole %i)", (int)m_player_cascada+1, (int)m_level+1, (int)m_hole+1);
   #endif
 }
 
 void IODoPreviousHole(void) { 
   m_hole = IOGetPreviousHole();
   #ifdef DEV
-  pd->system->logToConsole("Prev hole called (player %i, level %i, hole %i)", (int)m_player+1, (int)m_level+1, (int)m_hole+1);
+  pd->system->logToConsole("Prev hole called (player %i, level %i, hole %i)", (int)m_player_cascada+1, (int)m_level+1, (int)m_hole+1);
   #endif
 }
 
 void IODoNextHole(void) {
   m_hole = IOGetNextHole();
   #ifdef DEV
-  pd->system->logToConsole("Next hole called (player %i, level %i, hole %i)", (int)m_player+1, (int)m_level+1, (int)m_hole+1);
+  pd->system->logToConsole("Next hole called (player %i, level %i, hole %i)", (int)m_player_cascada+1, (int)m_level+1, (int)m_hole+1);
   #endif
 }
 
@@ -277,7 +277,7 @@ void IODoNextHoleWithLevelWrap(void) {
 }
 
 void IOSetPlayer(uint16_t player) {
-  m_player = player;
+  m_player_cascada = player;
 }
 
 void IOSetLevelHole(uint16_t level, uint16_t hole) {
@@ -285,14 +285,14 @@ void IOSetLevelHole(uint16_t level, uint16_t hole) {
   m_hole = hole;
   soundDoWaterfall(m_level);
   #ifdef DEV
-  pd->system->logToConsole("Set-level-hole called (player %i, level %i, hole %i)", (int)m_player+1, (int)m_level+1, (int)m_hole+1);
+  pd->system->logToConsole("Set-level-hole called (player %i, level %i, hole %i)", (int)m_player_cascada+1, (int)m_level+1, (int)m_hole+1);
   #endif
 }
 
 void IOSetCurrentHoleScore(const uint16_t score) {
   if (!score) { return; }
-  if (!m_persistent_data[m_player][m_level][m_hole] || score < m_persistent_data[m_player][m_level][m_hole]) {
-    m_persistent_data[m_player][m_level][m_hole] = score;
+  if (!m_persistent_data[m_player_cascada][m_level][m_hole] || score < m_persistent_data[m_player_cascada][m_level][m_hole]) {
+    m_persistent_data[m_player_cascada][m_level][m_hole] = score;
     IODoSave();
   }
 }
@@ -303,7 +303,7 @@ void IODoGoToNextUnplayedLevel(void) {
   // Find highest played level number
   for (int l = MAX_LEVELS-1; l >= 0; --l) {
     for (int h = MAX_HOLES-1; h >= 0; --h) {
-      if (m_persistent_data[m_player][l][h] && m_hole_par[l][h]) {
+      if (m_persistent_data[m_player_cascada][l][h] && m_hole_par[l][h]) {
         m_level = l;
         m_hole = h;
         found = true;
@@ -331,26 +331,26 @@ void IOGetLevelStatistics(const uint16_t level, uint16_t* score, uint16_t* par) 
     if (m_hole_par[level][h] == 0) { // h-1 was the last hole in this level
       return;
     }
-    if (m_persistent_data[m_player][level][h] == 0) { // the player hasn't finished all holes in the level
+    if (m_persistent_data[m_player_cascada][level][h] == 0) { // the player hasn't finished all holes in the level
       return;
       *score = 0;
       *par = 0;
     }
-    *score += m_persistent_data[m_player][level][h];
+    *score += m_persistent_data[m_player_cascada][level][h];
     *par += m_hole_par[level][h];
   }
 }
 
 void IOGetHoleStatistics(uint16_t level, uint16_t hole, uint16_t* score, uint16_t* par) {
   *par = m_hole_par[level][hole];
-  *score = m_persistent_data[m_player][level][hole];
+  *score = m_persistent_data[m_player_cascada][level][hole];
 }
 
 uint16_t IOGetCurrentHole(void) { return m_hole; }
 
 uint16_t IOGetPar(const uint16_t level, const uint16_t hole) { return m_hole_par[level][hole]; }
 
-uint16_t IOGetScore(const uint16_t level, const uint16_t hole) { return m_persistent_data[m_player][level][hole]; }
+uint16_t IOGetScore(const uint16_t level, const uint16_t hole) { return m_persistent_data[m_player_cascada][level][hole]; }
 
 uint16_t IOGetCurrentHolePar(void) { return IOGetPar(m_level, m_hole); }
 

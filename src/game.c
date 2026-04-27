@@ -10,7 +10,7 @@
 #include "physics.h"
 #include "sshot.h"
 
-int32_t m_frameCount = 0;
+int32_t m_frameCount_cascada = 0;
 float m_turretBarrelAngle = 180.0f;
 
 uint16_t m_previousWaterfallFg = 1;
@@ -26,10 +26,10 @@ bool m_yClamped = true;
 
 /// ///
 
-int32_t gameGetFrameCount() { return m_frameCount; }
+int32_t gameGetFrameCount() { return m_frameCount_cascada; }
 
 void gameDoResetFrameCount(void) { 
-  m_frameCount = 0;
+  m_frameCount_cascada = 0;
   soundResetPling();
 }
 
@@ -52,7 +52,7 @@ int gameLoop_cascada(void* _data) {
 #ifdef TAKE_SCREENSHOTS
   if (screenShotGetInProgress()) {
     screenShotDo();
-    ++m_frameCount;
+    ++m_frameCount_cascada;
     return 1;
   }
 
@@ -91,14 +91,14 @@ int gameLoop_cascada(void* _data) {
   if (!renderGetSubFreeze()) {
     if (gm == kGameWindow) {
       boardDoUpdate();
-      physicsDoUpdate(m_frameCount, fsm);
+      physicsDoUpdate(m_frameCount_cascada, fsm);
     }
-    renderDo(m_frameCount, fsm, gm);
+    renderDo(m_frameCount_cascada, fsm, gm);
     soundDoVolumes(fsm, gm);
     if (rand() % BIRDCALL_SFX_CHANCE == 0 && IOGetCurrentHoleWaterfallBackground(gm) > 0) { 
       soundDoSfx(kBirdSfx1);
     }
-    ++m_frameCount;
+    ++m_frameCount_cascada;
   }
 
   // if (FSMGet() == kGameFSM_GutterToTurret) pd->system->logToConsole("<<< gameLoop FC (loop end) %i", gameGetFrameCount());

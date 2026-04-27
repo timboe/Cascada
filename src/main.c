@@ -10,7 +10,7 @@
 #include "board.h"
 #include "sound.h"
 #include "fsm.h"
-#include "io.h"
+#include "game_io.h"
 #include "input.h"
 
 #ifdef _WINDLL
