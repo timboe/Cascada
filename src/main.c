@@ -18,12 +18,12 @@ __declspec(dllexport)
 #endif
 
 static void init(void) {
-  boardDoInit();
-  bitmapDoInit();
-  soundDoInit();
-  physicsDoInit();
-  inputDoInit();
-  FSMDo(kTitlesFSM_DisplayTitles);
+  boardDoInit_cascada();
+  bitmapDoInit_cascada();
+  soundDoInit_cascada();
+  physicsDoInit_cascada();
+  inputDoInit_cascada();
+  FSMDo_cascada(kTitlesFSM_DisplayTitles);
 }
 
 int eventHandler(PlaydateAPI* pd, PDSystemEvent event, uint32_t arg) {
@@ -33,7 +33,7 @@ int eventHandler(PlaydateAPI* pd, PDSystemEvent event, uint32_t arg) {
       pdxlog("EH: init");
       init();
       pd->display->setRefreshRate(TICK_FREQUENCY);
-      pd->system->setUpdateCallback(gameLoop, NULL);
+      pd->system->setUpdateCallback(gameLoop_cascada, NULL);
       break;
     case kEventTerminate:; case kEventLock:; case kEventLowPower:;
       pdxlog("EH: terminate/lock/low-p");
