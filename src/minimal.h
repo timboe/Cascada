@@ -57,3 +57,5 @@ void inputDoInit_cascada(void);
 int gameLoop_cascada(void* data);
 
 void FSMDo_cascada(const enum FSM_t transitionTo);
+
+void IODoSave(void);
